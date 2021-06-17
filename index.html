@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/index.css" />
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+    <title>Stocks Wallet</title>
+  </head>
+  <body>
+    <header>
+      <h1 class="header-title">Stocks Wallet</h1>
+    </header>
+
+    <main>
+      <section class="grafico-pizza" id="grafico-pizza"></section>
+      <section class="grafico-linha" id="grafico-linha"></section>
+      <section class="acoes" id="acoes">
+        <table class="tabela-acoes" id="tabela-acoes">
+          <thead>
+            <tr>
+              <th>ASSETS</th>
+              <th>TOTAL</th>
+              <th>BRL VALUE</th>
+              <th>24H CHANGE</th>
+              <th>DISTRIBUTION %</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-acoes-corpo">
+            <tr class="acoes-item">
+              <td class="acoes-item-info" id="tdAssest">PETR4</td>
+              <td class="acoes-item-info" id="tdTotal">200.3</td>
+              <td class="acoes-item-info" id="tdValue">26.28</td>
+              <td class="acoes-item-info" id="td24Change"></td>
+              <td class="acoes-item-info" id="tdQuantidade"></td>
+            </tr>
+            <tr class="acoes-item">
+              <td class="acoes-item-info" id="tdAssest">MGLU3</td>
+              <td class="acoes-item-info" id="tdTotal">10005.8</td>
+              <td class="acoes-item-info" id="tdValue">20.38</td>
+              <td class="acoes-item-info" id="td24Change"></td>
+              <td class="acoes-item-info" id="tdQuantidade"></td>
+            </tr>
+            <tr class="acoes-item">
+              <td class="acoes-item-info" id="tdAssest">BBDC4</td>
+              <td class="acoes-item-info" id="tdTotal">5662.2</td>
+              <td class="acoes-item-info" id="tdValue">26.67</td>
+              <td class="acoes-item-info" id="td24Change"></td>
+              <td class="acoes-item-info" id="tdQuantidade"></td>
+            </tr>
+            <tr class="acoes-item">
+              <td class="acoes-item-info" id="tdAssest">BBAS3</td>
+              <td class="acoes-item-info" id="tdTotal">105.389</td>
+              <td class="acoes-item-info" id="tdValue">35.36</td>
+              <td class="acoes-item-info" id="td24Change"></td>
+              <td class="acoes-item-info" id="tdQuantidade"></td>
+            </tr>
+            <tr class="acoes-item">
+              <td class="acoes-item-info" id="tdAssest">ABEV3</td>
+              <td class="acoes-item-info" id="tdTotal">60.389</td>
+              <td class="acoes-item-info" id="tdValue">17.74</td>
+              <td class="acoes-item-info" id="td24Change"></td>
+              <td class="acoes-item-info" id="tdQuantidade"></td>
+            </tr>
+            <tr class="acoes-item">
+              <td class="acoes-item-info" id="tdAssest">ITSA4</td>
+              <td class="acoes-item-info" id="tdTotal">85.463</td>
+              <td class="acoes-item-info" id="tdValue">10.88</td>
+              <td class="acoes-item-info" id="td24Change"></td>
+              <td class="acoes-item-info" id="tdQuantidade"></td>
+            </tr>
+            <tr class="acoes-item">
+              <td class="acoes-item-info" id="tdAssest">ARCE</td>
+              <td class="acoes-item-info" id="tdTotal">6971.56</td>
+              <td class="acoes-item-info" id="tdValue">24.63</td>
+              <td class="acoes-item-info" id="td24Change"></td>
+              <td class="acoes-item-info" id="tdQuantidade"></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </body>
+  <script src="./js/Model/StocksModel.js"></script>
+  <script src="./js/Controller/GraficoController.js"></script>
+  <script>
+    google.charts.load("current", { packages: ["corechart"] });
+    let controller = new GraficoController();
+    controller.setAlteração();
+
+    function graficoPizza() {
+      let tabela = new google.visualization.DataTable();
+      tabela.addColumn("string", "Stricks");
+      tabela.addColumn("number", "Total");
+      let array = [];
+      controller.getInfos().forEach((stickSelected) => {
+        array.push([stickSelected.stockName, stickSelected.stockTotal]);
+      });
+      tabela.addRows(array);
+
+      let opcoes = {
+        title: "Stocks on Wallet",
+        titleTextStyle: { color: "#FFF", fontSize: 30, italic: true },
+        legendTextStyle: { color: "#FFF", fontSize: 20 },
+        backgroundColor: "transparent",
+        legend: "bottom",
+        pieSliceText: "value",
+        is3D: true,
+        width: "100%",
+        height: "100%",
+        chartArea: {
+          height: "80%",
+          width: "80%",
+        },
+      };
+      let grafico = new google.visualization.PieChart(
+        document.getElementById("grafico-pizza")
+      );
+      grafico.draw(tabela, opcoes);
+    }
+    google.charts.setOnLoadCallback(graficoPizza);
+
+    async function graficoLinha(target) {
+      let targ = target == undefined ? "PETR4" : target;
+      let tabela = new google.visualization.DataTable();
+      tabela.addColumn("string", "Day");
+      tabela.addColumn("number", "Value");
+      let c = await controller.buscaArqTrataDados(targ);
+      tabela.addRows(c);
+      let opcoes = {
+        title: `Last 30 Days ${targ}`,
+        titleTextStyle: { color: "#FFF", fontSize: 30, italic: true },
+        backgroundColor: "transparent",
+        width: "100%",
+        height: "100%",
+        chartArea: {
+          height: "80%",
+          width: "80%",
+        },
+        hAxis: {
+          textStyle: {
+            color: "#ffffff",
+          },
+        },
+        vAxis: {
+          textStyle: {
+            color: "#ffffff",
+          },
+        },
+        series: {
+          0: {
+            visibleInLegend: false,
+            color: "#AFE313",
+          },
+        },
+      };
+      let grafico = new google.visualization.LineChart(
+        document.getElementById("grafico-linha")
+      );
+      grafico.draw(tabela, opcoes);
+    }
+
+    function atualizaGrafico() {
+      document.querySelectorAll(".acoes-item-info").forEach((cell) => {
+        cell.addEventListener("click", (item) => {
+          graficoLinha(item.target.parentNode.childNodes.item(1).textContent);
+        });
+      });
+    }
+    this.atualizaGrafico();
+    google.charts.setOnLoadCallback(graficoLinha);
+  </script>
+</html>
