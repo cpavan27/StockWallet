@@ -61,6 +61,12 @@ header {
     border-color: #9ecaed;
     box-shadow: 0 0 10px #9ecaed;
 }
+.acoes-item:active{
+    box-shadow: none;
+}
+.acoes-item:active .acoes-item-info{
+    color: rgba(239, 247, 255, 0.5);
+}
 .acoes-item-info{
     padding: 10px;
     border: solid 1px rgba(204, 204, 204, .5);
